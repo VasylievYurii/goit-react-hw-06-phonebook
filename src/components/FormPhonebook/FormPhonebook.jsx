@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { nanoid } from 'nanoid';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -10,6 +9,8 @@ import {
   ErrorMessageForm,
   FieldForm,
 } from './FormPhonebook.styled';
+import { useDispatch } from 'react-redux';
+import { addContact } from 'redux/contactsSlice';
 
 const initialValues = {
   name: '',
@@ -31,14 +32,13 @@ const validationSchema = Yup.object({
     .required('Phone number is required'),
 });
 
-const FormPhonebook = ({ onSubmit }) => {
+const FormPhonebook = () => {
+  const dispatch = useDispatch();
   const inputNameId = nanoid();
   const inputNumberId = nanoid();
 
   const handleSubmit = (values, { resetForm }) => {
-    const idGen = nanoid();
-    const contact = { id: idGen, ...values };
-    onSubmit(contact);
+    dispatch(addContact(values));
     resetForm();
   };
 
@@ -59,10 +59,6 @@ const FormPhonebook = ({ onSubmit }) => {
       </FormWrapper>
     </Formik>
   );
-};
-
-FormPhonebook.propTypes = {
-  onSubmit: PropTypes.func,
 };
 
 export default FormPhonebook;

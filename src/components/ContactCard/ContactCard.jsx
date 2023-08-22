@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
+import { useSelector, useDispatch } from 'react-redux';
 import {
   ContactList,
   ContactCard,
@@ -9,35 +8,44 @@ import {
   RiDeleteBinLineSvg,
   ContactUl,
 } from './ContactCard.styled';
+import { getContacts, getStatusFilter } from 'redux/selectors';
+import { deleteContact } from 'redux/contactsSlice';
 
-const Contact = ({ array, onDeleteItem }) => {
+const getVisibleContacts = (contacts, statusFilter) => {
+  if (statusFilter) {
+    const normalizedFilter = statusFilter.toLowerCase();
+    const filteredContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+    return filteredContacts;
+  } else {
+    return contacts;
+  }
+};
+
+const Contact = () => {
+  const contacts = useSelector(getContacts);
+  const statusFilter = useSelector(getStatusFilter);
+  const visibleContacts = getVisibleContacts(contacts, statusFilter);
+  const dispatch = useDispatch();
+  const handleDelete = id => dispatch(deleteContact(id));
+
   return (
     <ContactUl>
-      {array.map(contact => {
+      {visibleContacts.map(contact => {
         const { id, name, number } = contact;
         return (
           <ContactList key={id}>
             <ContactCard href="#" onClick={e => e.preventDefault()}>
               <ContactName>{name}</ContactName>
               <ContactNumber>{number}</ContactNumber>
-              <RiDeleteBinLineSvg onClick={() => onDeleteItem(id)} />
+              <RiDeleteBinLineSvg onClick={() => handleDelete(id)} />
             </ContactCard>
           </ContactList>
         );
       })}
     </ContactUl>
   );
-};
-
-Contact.propTypes = {
-  array: PropTypes.arrayOf(
-    PropTypes.exact({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ),
-  onDeleteItem: PropTypes.func,
 };
 
 export default Contact;

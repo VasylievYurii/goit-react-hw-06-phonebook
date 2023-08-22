@@ -1,24 +1,29 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { FilterLabel, FilterInput, RiUserSearchLineSvg } from './Filter.styled';
+import { useDispatch } from 'react-redux';
+import { setFilter } from 'redux/filterSlice';
 
-const Filter = ({ value, onChange }) => {
+const Filter = () => {
+  const dispatch = useDispatch();
+  const [text, setText] = useState('');
+
+  const handleOnChange = e => {
+    const newText = e.currentTarget.value;
+    setText(newText);
+    dispatch(setFilter(newText));
+  };
+
   return (
     <FilterLabel>
       <FilterInput
         type="text"
-        value={value}
-        onChange={onChange}
+        value={text}
+        onChange={handleOnChange}
         placeholder="Name"
       />
       <RiUserSearchLineSvg />
     </FilterLabel>
   );
-};
-
-Filter.propTypes = {
-  value: PropTypes.string,
-  onChange: PropTypes.func,
 };
 
 export default Filter;
