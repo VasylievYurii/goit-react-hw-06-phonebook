@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { FilterLabel, FilterInput, RiUserSearchLineSvg } from './Filter.styled';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { setFilter } from 'redux/filterSlice';
+import { getStatusFilter } from 'redux/selectors';
 
 const Filter = () => {
   const dispatch = useDispatch();
-  const [text, setText] = useState('');
+  const localStore = useSelector(getStatusFilter);
+  const [text, setText] = useState(localStore ?? '');
 
   const handleOnChange = e => {
     const newText = e.currentTarget.value;
